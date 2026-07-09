@@ -14,13 +14,191 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      files: {
+        Row: {
+          created_at: string
+          folder_id: string | null
+          id: string
+          is_starred: boolean
+          is_trashed: boolean
+          mime_type: string | null
+          name: string
+          size_bytes: number
+          storage_path: string
+          trashed_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          is_starred?: boolean
+          is_trashed?: boolean
+          mime_type?: string | null
+          name: string
+          size_bytes?: number
+          storage_path: string
+          trashed_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          is_starred?: boolean
+          is_trashed?: boolean
+          mime_type?: string | null
+          name?: string
+          size_bytes?: number
+          storage_path?: string
+          trashed_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "files_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          created_at: string
+          id: string
+          is_trashed: boolean
+          name: string
+          parent_id: string | null
+          trashed_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_trashed?: boolean
+          name: string
+          parent_id?: string | null
+          trashed_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_trashed?: boolean
+          name?: string
+          parent_id?: string | null
+          trashed_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          storage_quota_bytes: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          storage_quota_bytes?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          storage_quota_bytes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      shares: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          file_id: string
+          id: string
+          permission: string
+          token: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          file_id: string
+          id?: string
+          permission?: string
+          token: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          file_id?: string
+          id?: string
+          permission?: string
+          token?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shares_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_share_by_token: {
+        Args: { _token: string }
+        Returns: {
+          expires_at: string
+          file_id: string
+          file_name: string
+          file_size: number
+          mime_type: string
+          owner_name: string
+          permission: string
+          share_id: string
+          storage_path: string
+        }[]
+      }
+      get_storage_used: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
