@@ -84,17 +84,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Vault is a modern, secure file sharing workspace. Upload, organize, and share files with link-based access in a beautiful dark-first interface.",
+          "A modern workspace to upload, organize, and share files with link-based access. Dark-first, fast, and secure.",
       },
       { name: "author", content: "Vault" },
-      { property: "og:title", content: "Vault — Secure file sharing" },
+      { property: "og:title", content: "Vault — Secure file sharing, beautifully done" },
       {
         property: "og:description",
         content:
-          "Upload, organize, and share files with a fast, dark-first workspace. Drag-and-drop uploads, folders, starred files, and secure share links.",
+          "A modern workspace to upload, organize, and share files with link-based access. Dark-first, fast, and secure.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Vault — Secure file sharing, beautifully done" },
+      { name: "twitter:description", content: "A modern workspace to upload, organize, and share files with link-based access. Dark-first, fast, and secure." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2541f67-6000-4389-ae6e-8ff84ed9787d/id-preview-0f9e2d8f--5801813d-176f-4839-8491-23491e99e011.lovable.app-1783619097540.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2541f67-6000-4389-ae6e-8ff84ed9787d/id-preview-0f9e2d8f--5801813d-176f-4839-8491-23491e99e011.lovable.app-1783619097540.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
