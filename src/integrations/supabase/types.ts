@@ -179,11 +179,82 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_share: { Args: { _share_id: string }; Returns: undefined }
+      admin_list_shares: {
+        Args: never
+        Returns: {
+          created_at: string
+          expires_at: string
+          file_id: string
+          file_name: string
+          file_size: number
+          owner_email: string
+          owner_id: string
+          owner_name: string
+          permission: string
+          share_id: string
+          token: string
+          view_count: number
+        }[]
+      }
+      admin_list_users: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          created_at: string
+          email: string
+          file_count: number
+          full_name: string
+          id: string
+          is_admin: boolean
+          share_count: number
+          storage_quota_bytes: number
+          storage_used_bytes: number
+        }[]
+      }
+      admin_overview: {
+        Args: never
+        Returns: {
+          total_files: number
+          total_shares: number
+          total_storage_bytes: number
+          total_users: number
+        }[]
+      }
+      admin_set_role: {
+        Args: {
+          _grant: boolean
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       get_share_by_token: {
         Args: { _token: string }
         Returns: {
@@ -199,9 +270,16 @@ export type Database = {
         }[]
       }
       get_storage_used: { Args: { _user_id: string }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -328,6 +406,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

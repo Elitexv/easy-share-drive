@@ -8,6 +8,7 @@ import {
   User as UserIcon,
   LogOut,
   Loader2,
+  Shield,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +56,21 @@ export function AppSidebar({ userId }: { userId: string }) {
     refetchInterval: 5000,
   });
 
+  const { data: isAdmin = false } = useQuery({
+    queryKey: ["is-admin", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
+  const navItems = isAdmin ? [...items, { title: "Admin", url: "/admin", icon: Shield }] : items;
+
   const quota = Number(profile?.storage_quota_bytes ?? 5 * 1024 ** 3);
   const pct = Math.min(100, (storageUsed / quota) * 100);
 
@@ -80,7 +96,7 @@ export function AppSidebar({ userId }: { userId: string }) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
+              {navItems.map((item) => {
                 const active = pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
