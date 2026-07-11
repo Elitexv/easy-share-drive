@@ -56,6 +56,21 @@ export function AppSidebar({ userId }: { userId: string }) {
     refetchInterval: 5000,
   });
 
+  const { data: isAdmin = false } = useQuery({
+    queryKey: ["is-admin", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
+  const navItems = isAdmin ? [...items, { title: "Admin", url: "/admin", icon: Shield }] : items;
+
   const quota = Number(profile?.storage_quota_bytes ?? 5 * 1024 ** 3);
   const pct = Math.min(100, (storageUsed / quota) * 100);
 
