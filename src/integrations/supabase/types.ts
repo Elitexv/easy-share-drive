@@ -145,6 +145,7 @@ export type Database = {
           expires_at: string | null
           file_id: string
           id: string
+          password_hash: string | null
           permission: string
           token: string
           view_count: number
@@ -155,6 +156,7 @@ export type Database = {
           expires_at?: string | null
           file_id: string
           id?: string
+          password_hash?: string | null
           permission?: string
           token: string
           view_count?: number
@@ -165,6 +167,7 @@ export type Database = {
           expires_at?: string | null
           file_id?: string
           id?: string
+          password_hash?: string | null
           permission?: string
           token?: string
           view_count?: number
@@ -276,6 +279,27 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_share_view: { Args: { _token: string }; Returns: undefined }
+      resolve_share: {
+        Args: { _password?: string; _token: string }
+        Returns: {
+          expires_at: string
+          file_id: string
+          file_name: string
+          file_size: number
+          mime_type: string
+          owner_name: string
+          permission: string
+          requires_password: boolean
+          share_id: string
+          status: string
+          storage_path: string
+        }[]
+      }
+      set_share_password: {
+        Args: { _password: string; _share_id: string }
+        Returns: undefined
       }
     }
     Enums: {
