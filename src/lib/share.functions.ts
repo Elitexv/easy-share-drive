@@ -60,7 +60,7 @@ export const accessShare = createServerFn({ method: "POST" })
     const pub = serverPublishableClient();
     const { data: rows, error } = await pub.rpc("resolve_share", {
       _token: data.token,
-      _password: data.password,
+      _password: data.password ?? "",
     });
     if (error) return { status: "not_found" };
     const row = Array.isArray(rows) ? rows[0] : rows;
