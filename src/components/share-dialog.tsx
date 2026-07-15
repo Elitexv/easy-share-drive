@@ -62,14 +62,26 @@ export function ShareDialog({ fileId, fileName, open, onOpenChange }: Props) {
         expiresAt = d.toISOString();
       }
       const token = randomToken(24);
-      const { error } = await supabase.from("shares").insert({
-        file_id: fileId,
-        created_by: user.id,
-        token,
-        permission,
-        expires_at: expiresAt,
-      });
+      const { data: inserted, error } = await supabase
+        .from("shares")
+        .insert({
+          file_id: fileId,
+          created_by: user.id,
+          token,
+          permission,
+          expires_at: expiresAt,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
+      if (password.length > 0 && inserted) {
+        const { error: pwErr } = await supabase.rpc("set_share_password", {
+          _share_id: inserted.id,
+          _password: password,
+        });
+        if (pwErr) throw pwErr;
+      }
+      setPassword("");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["shares", fileId] });
