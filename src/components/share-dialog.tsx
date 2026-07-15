@@ -33,6 +33,7 @@ export function ShareDialog({ fileId, fileName, open, onOpenChange }: Props) {
   const qc = useQueryClient();
   const [permission, setPermission] = useState<"view" | "download">("download");
   const [expiresDays, setExpiresDays] = useState<string>("never");
+  const [password, setPassword] = useState<string>("");
 
   const { data: shares = [], isLoading } = useQuery({
     queryKey: ["shares", fileId],
