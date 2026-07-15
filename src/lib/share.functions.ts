@@ -69,7 +69,7 @@ export const accessShare = createServerFn({ method: "POST" })
     const base = {
       file_name: row.file_name ?? undefined,
       file_size: row.file_size ? Number(row.file_size) : undefined,
-      mime_type: row.mime_type ?? null,
+      mime_type: row.mime_type,
       permission: (row.permission as "view" | "download") ?? undefined,
       expires_at: row.expires_at ?? null,
       owner_name: row.owner_name ?? null,
