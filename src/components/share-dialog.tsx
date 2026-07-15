@@ -152,6 +152,19 @@ export function ShareDialog({ fileId, fileName, open, onOpenChange }: Props) {
             Create link
           </Button>
         </div>
+        <div className="space-y-1.5">
+          <Label>Password (optional)</Label>
+          <Input
+            type="password"
+            placeholder="Leave blank for no password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          <p className="text-xs text-muted-foreground">
+            When set, anyone opening the link must enter this password to view or download the file.
+          </p>
+        </div>
 
         <div className="mt-4">
           <div className="mb-2 text-xs font-medium text-muted-foreground uppercase">
