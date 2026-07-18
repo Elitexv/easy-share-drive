@@ -7,11 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { iconForMime, isPreviewable } from "@/lib/file-icons";
 import { formatBytes } from "@/lib/format";
-<<<<<<< HEAD
-import { describeSupabaseError } from "@/integrations/supabase/error";
-=======
 import { accessShare, type ShareResolution } from "@/lib/share.functions";
->>>>>>> fedc1e0e52676f54d7091df01fa97615458c90de
 
 export const Route = createFileRoute("/share/$token")({
   component: SharePage,
@@ -49,38 +45,6 @@ function SharePage() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    (async () => {
-      const { data, error } = await supabase.rpc("get_share_by_token", { _token: token });
-      if (error) {
-        setError(describeSupabaseError(error, "This share link is invalid or has expired."));
-      } else if (!data || (Array.isArray(data) && data.length === 0)) {
-        setError("This share link is invalid or has expired.");
-      } else {
-        const row = (Array.isArray(data) ? data[0] : data) as ShareInfo;
-        setInfo(row);
-        if (isPreviewable(row.mime_type)) {
-          const { data: signed } = await supabase.storage
-            .from("files")
-            .createSignedUrl(row.storage_path, 600);
-          if (signed) setPreviewUrl(signed.signedUrl);
-        }
-      }
-      setLoading(false);
-    })();
-  }, [token]);
-
-  const download = async () => {
-    if (!info) return;
-    const { data, error } = await supabase.storage
-      .from("files")
-      .createSignedUrl(info.storage_path, 60, { download: info.file_name });
-    if (error) {
-      toast.error("Couldn't download file", { description: describeSupabaseError(error, "Couldn't download file") });
-      return;
-    }
-    if (data) window.open(data.signedUrl, "_blank");
-=======
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -96,7 +60,6 @@ function SharePage() {
     } else {
       setPasswordError("Download unavailable.");
     }
->>>>>>> fedc1e0e52676f54d7091df01fa97615458c90de
   };
 
   const previewUrl =
