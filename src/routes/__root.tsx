@@ -9,7 +9,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,7 +28,7 @@ function NotFoundComponent() {
             href="/"
             className="inline-flex items-center justify-center rounded-full bg-gradient-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
           >
-            Back to Vault
+            Back to E-share
           </a>
         </div>
       </div>
@@ -41,7 +40,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    console.error(error);
   }, [error]);
 
   return (
@@ -51,7 +50,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong. Try refreshing or head back to your vault.
+          Something went wrong. Try refreshing or head back to E-share.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -80,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Vault — Secure file sharing, beautifully done" },
+      { title: "E-share — Secure file sharing, beautifully done" },
       {
         name: "description",
         content:
           "A modern workspace to upload, organize, and share files with link-based access. Dark-first, fast, and secure.",
       },
-      { name: "author", content: "Vault" },
-      { property: "og:title", content: "Vault — Secure file sharing, beautifully done" },
+      { name: "author", content: "E-share" },
+      { property: "og:title", content: "E-share — Secure file sharing, beautifully done" },
       {
         property: "og:description",
         content:
@@ -95,10 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Vault — Secure file sharing, beautifully done" },
+      { name: "twitter:title", content: "E-share — Secure file sharing, beautifully done" },
       { name: "twitter:description", content: "A modern workspace to upload, organize, and share files with link-based access. Dark-first, fast, and secure." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2541f67-6000-4389-ae6e-8ff84ed9787d/id-preview-0f9e2d8f--5801813d-176f-4839-8491-23491e99e011.lovable.app-1783619097540.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a2541f67-6000-4389-ae6e-8ff84ed9787d/id-preview-0f9e2d8f--5801813d-176f-4839-8491-23491e99e011.lovable.app-1783619097540.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

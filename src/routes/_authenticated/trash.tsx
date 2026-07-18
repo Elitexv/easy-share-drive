@@ -5,7 +5,7 @@ import { FileBrowser } from "@/components/file-browser";
 
 export const Route = createFileRoute("/_authenticated/trash")({
   component: TrashPage,
-  head: () => ({ meta: [{ title: "Trash — Vault" }] }),
+  head: () => ({ meta: [{ title: "Trash — E-share" }] }),
 });
 
 function TrashPage() {

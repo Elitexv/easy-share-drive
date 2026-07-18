@@ -5,7 +5,7 @@ import { FileBrowser } from "@/components/file-browser";
 
 export const Route = createFileRoute("/_authenticated/starred")({
   component: StarredPage,
-  head: () => ({ meta: [{ title: "Starred — Vault" }] }),
+  head: () => ({ meta: [{ title: "Starred — E-share" }] }),
 });
 
 function StarredPage() {

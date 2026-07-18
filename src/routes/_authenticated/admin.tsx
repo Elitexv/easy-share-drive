@@ -55,7 +55,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!role) throw redirect({ to: "/dashboard" });
   },
   component: AdminPage,
-  head: () => ({ meta: [{ title: "Admin — Vault" }] }),
+  head: () => ({ meta: [{ title: "Admin — E-share" }] }),
 });
 
 function AdminPage() {

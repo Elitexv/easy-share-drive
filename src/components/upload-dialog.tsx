@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { formatBytes } from "@/lib/format";
 import { toast } from "sonner";
+import { describeSupabaseError } from "@/integrations/supabase/error";
 
 interface UploadItem {
   id: string;
@@ -65,12 +66,13 @@ export function UploadDialog({
       qc.invalidateQueries({ queryKey: ["storage-used"] });
     },
     onError: (err: Error, item) => {
+      const message = describeSupabaseError(err, `Upload failed: ${item.file.name}`);
       setItems((prev) =>
         prev.map((it) =>
-          it.id === item.id ? { ...it, status: "error", error: err.message } : it,
+          it.id === item.id ? { ...it, status: "error", error: message } : it,
         ),
       );
-      toast.error(`Upload failed: ${item.file.name}`, { description: err.message });
+      toast.error(`Upload failed: ${item.file.name}`, { description: message });
     },
   });
 

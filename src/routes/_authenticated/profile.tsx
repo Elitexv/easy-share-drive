@@ -14,7 +14,7 @@ import { formatBytes } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
-  head: () => ({ meta: [{ title: "Profile — Vault" }] }),
+  head: () => ({ meta: [{ title: "Profile — E-share" }] }),
 });
 
 function ProfilePage() {

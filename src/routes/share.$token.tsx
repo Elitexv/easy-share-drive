@@ -5,12 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { iconForMime, isPreviewable } from "@/lib/file-icons";
 import { formatBytes } from "@/lib/format";
+import { describeSupabaseError } from "@/integrations/supabase/error";
 
 export const Route = createFileRoute("/share/$token")({
   component: SharePage,
   head: () => ({
     meta: [
-      { title: "Shared file — Vault" },
+      { title: "Shared file — E-share" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -39,7 +40,7 @@ function SharePage() {
     (async () => {
       const { data, error } = await supabase.rpc("get_share_by_token", { _token: token });
       if (error) {
-        setError("This share link is invalid or has expired.");
+        setError(describeSupabaseError(error, "This share link is invalid or has expired."));
       } else if (!data || (Array.isArray(data) && data.length === 0)) {
         setError("This share link is invalid or has expired.");
       } else {
@@ -58,9 +59,13 @@ function SharePage() {
 
   const download = async () => {
     if (!info) return;
-    const { data } = await supabase.storage
+    const { data, error } = await supabase.storage
       .from("files")
       .createSignedUrl(info.storage_path, 60, { download: info.file_name });
+    if (error) {
+      toast.error("Couldn't download file", { description: describeSupabaseError(error, "Couldn't download file") });
+      return;
+    }
     if (data) window.open(data.signedUrl, "_blank");
   };
 
@@ -71,11 +76,11 @@ function SharePage() {
           <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary shadow-glow">
             <Cloud className="size-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold">Vault</span>
+          <span className="text-lg font-semibold">E-share</span>
         </Link>
         <Link to="/auth">
           <Button variant="outline" size="sm" className="border-border bg-surface/60">
-            Create your own vault
+            Create your own E-share
           </Button>
         </Link>
       </header>

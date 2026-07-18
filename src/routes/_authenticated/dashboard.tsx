@@ -10,7 +10,7 @@ const searchSchema = z.object({ folder: z.string().optional() });
 export const Route = createFileRoute("/_authenticated/dashboard")({
   validateSearch: (s) => searchSchema.parse(s),
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "My files — Vault" }] }),
+  head: () => ({ meta: [{ title: "My files — E-share" }] }),
 });
 
 function DashboardPage() {
@@ -41,7 +41,7 @@ function DashboardPage() {
               folderId={folderId}
               onFolderChange={setFolderId}
               title="My files"
-              emptyTitle="Your vault is empty"
+              emptyTitle="Your E-share is empty"
               emptyBody="Drag files anywhere or click Upload to add your first file. Organize with folders as you go."
             />
           </main>

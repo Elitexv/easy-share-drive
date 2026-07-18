@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRelative, randomToken } from "@/lib/format";
+import { describeSupabaseError } from "@/integrations/supabase/error";
 
 interface Props {
   fileId: string;
@@ -74,7 +75,8 @@ export function ShareDialog({ fileId, fileName, open, onOpenChange }: Props) {
       qc.invalidateQueries({ queryKey: ["shares", fileId] });
       toast.success("Share link created");
     },
-    onError: (err: Error) => toast.error("Couldn't create link", { description: err.message }),
+    onError: (err: Error) =>
+      toast.error("Couldn't create link", { description: describeSupabaseError(err, "Couldn't create link") }),
   });
 
   const revoke = useMutation({

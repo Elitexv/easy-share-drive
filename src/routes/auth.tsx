@@ -4,13 +4,12 @@ import { z } from "zod";
 import { Cloud, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-const searchSchema = z.object({
+export const searchSchema = z.object({
   mode: z.enum(["signin", "signup", "forgot"]).optional(),
 });
 
@@ -19,21 +18,40 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Sign in — Vault" },
-      { name: "description", content: "Sign in or create your Vault account." },
+      { title: "Sign in — E-share" },
+      { name: "description", content: "Sign in or create your E-share account." },
     ],
   }),
 });
 
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
+}
+
 function AuthPage() {
   const search = Route.useSearch();
+  return <AuthPageContent initialMode={search.mode} />;
+}
+
+export function AuthPageContent({
+  initialMode,
+}: {
+  initialMode?: "signin" | "signup" | "forgot";
+}) {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"signin" | "signup" | "forgot">(search.mode ?? "signin");
+  const [tab, setTab] = useState<"signin" | "signup" | "forgot">(initialMode ?? "signin");
 
   useEffect(() => {
+    let active = true;
+
     supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
       if (data.session) navigate({ to: "/dashboard" });
     });
+
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   return (
@@ -44,7 +62,7 @@ function AuthPage() {
           <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary shadow-glow">
             <Cloud className="size-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold tracking-tight">Vault</span>
+          <span className="text-lg font-semibold tracking-tight">E-share</span>
         </Link>
         <div className="max-w-md">
           <h2 className="text-4xl font-semibold tracking-tight">
@@ -55,7 +73,7 @@ function AuthPage() {
             terms.
           </p>
         </div>
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Vault</p>
+        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} E-share</p>
       </div>
 
       {/* Right: form */}
@@ -65,7 +83,7 @@ function AuthPage() {
             <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary shadow-glow">
               <Cloud className="size-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold">Vault</span>
+            <span className="text-lg font-semibold">E-share</span>
           </div>
           <div className="rounded-2xl border border-border bg-card/60 p-6 shadow-elegant backdrop-blur sm:p-8">
             <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
@@ -101,16 +119,25 @@ function GoogleButton() {
       disabled={loading}
       onClick={async () => {
         setLoading(true);
-        const result = await lovable.auth.signInWithOAuth("google", {
-          redirect_uri: window.location.origin,
-        });
-        if (result.error) {
-          toast.error("Google sign-in failed", { description: result.error.message });
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: `${window.location.origin}/oauth/consent`,
+            },
+          });
+
+          if (error) {
+            toast.error("Google sign-in failed", { description: error.message });
+            return;
+          }
+
+          if (data?.url) {
+            window.location.assign(data.url);
+          }
+        } finally {
           setLoading(false);
-          return;
         }
-        if (result.redirected) return;
-        window.location.href = "/dashboard";
       }}
     >
       {loading ? (
@@ -147,17 +174,34 @@ function SignInForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) return toast.error("Sign in failed", { description: error.message });
-    toast.success("Welcome back");
-    navigate({ to: "/dashboard" });
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizeEmail(email),
+        password,
+      });
+
+      if (error) {
+        toast.error("Sign in failed", { description: error.message });
+        return;
+      }
+
+      if (!data.session) {
+        toast.error("Sign in failed", { description: "No session was created. Please try again." });
+        return;
+      }
+
+      toast.success("Welcome back");
+      navigate({ to: "/dashboard" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Sign in to your Vault.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Sign in to E-share.</p>
       <div className="mt-6">
         <GoogleButton />
       </div>
@@ -207,25 +251,35 @@ function SignUpForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) return toast.error("Password must be at least 6 characters");
+
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error("Sign up failed", { description: error.message });
-    toast.success("Check your email to confirm your account", {
-      description: "Or sign in directly if confirmations are disabled.",
-    });
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: normalizeEmail(email),
+        password,
+        options: {
+          data: { full_name: name.trim() },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        toast.error("Sign up failed", { description: error.message });
+        return;
+      }
+
+      toast.success("Check your email to confirm your account", {
+        description: "Or sign in directly if confirmations are disabled.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight">Create your Vault</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Create your E-share account</h1>
       <p className="mt-1 text-sm text-muted-foreground">Free forever for personal use.</p>
       <div className="mt-6">
         <GoogleButton />
@@ -283,12 +337,21 @@ function ForgotForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setLoading(false);
-    if (error) return toast.error("Couldn't send reset email", { description: error.message });
-    toast.success("Check your email for a reset link");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizeEmail(email), {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast.error("Couldn't send reset email", { description: error.message });
+        return;
+      }
+
+      toast.success("Check your email for a reset link");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -88,7 +88,7 @@ export function AppSidebar({ userId }: { userId: string }) {
             <Cloud className="size-4 text-primary-foreground" />
           </div>
           <span className="text-base font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
-            Vault
+            E-share
           </span>
         </Link>
       </SidebarHeader>

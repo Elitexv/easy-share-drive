@@ -6,7 +6,7 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
   head: () => ({
     meta: [
-      { title: "Vault — Secure file sharing, beautifully done" },
+      { title: "E-share — Secure file sharing, beautifully done" },
       {
         name: "description",
         content:
@@ -25,7 +25,7 @@ function LandingPage() {
           <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary shadow-glow">
             <Cloud className="size-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold tracking-tight">Vault</span>
+          <span className="text-lg font-semibold tracking-tight">E-share</span>
         </Link>
         <nav className="flex items-center gap-2">
           <Link to="/auth">
@@ -52,13 +52,13 @@ function LandingPage() {
           securely shared.
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          Drag, drop, and share in seconds. Vault is a dark-first workspace built for teams and
+          Drag, drop, and share in seconds. E-share is a dark-first workspace built for teams and
           creators who care about how things look — and how safely they travel.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link to="/auth" search={{ mode: "signup" } as never}>
             <Button size="lg" className="bg-gradient-primary shadow-glow hover:opacity-90">
-              Create your vault <ArrowRight className="ml-1 size-4" />
+              Get started with E-share <ArrowRight className="ml-1 size-4" />
             </Button>
           </Link>
           <Link to="/auth">
@@ -102,7 +102,7 @@ function LandingPage() {
       </section>
 
       <footer className="border-t border-border/60 py-8 text-center text-xs text-muted-foreground">
-        Built with Vault · {new Date().getFullYear()}
+        Built with E-share · {new Date().getFullYear()}
       </footer>
     </div>
   );
