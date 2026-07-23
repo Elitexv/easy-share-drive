@@ -35,18 +35,18 @@ export function StatsBento({ userId }: Props) {
         supabase
           .from("files")
           .select("id", { count: "exact", head: true })
-          .eq("owner_id", userId)
+          .eq("user_id", userId)
           .eq("is_trashed", false),
         supabase
           .from("files")
           .select("id", { count: "exact", head: true })
-          .eq("owner_id", userId)
+          .eq("user_id", userId)
           .eq("is_starred", true)
           .eq("is_trashed", false),
         supabase
           .from("shares")
           .select("id", { count: "exact", head: true })
-          .eq("owner_id", userId),
+          .eq("user_id", userId),
       ]);
       return {
         files: files.count ?? 0,
@@ -62,7 +62,7 @@ export function StatsBento({ userId }: Props) {
       const { data } = await supabase
         .from("files")
         .select("id,name,mime_type,size_bytes,updated_at,folder_id")
-        .eq("owner_id", userId)
+        .eq("user_id", userId)
         .eq("is_trashed", false)
         .order("updated_at", { ascending: false })
         .limit(5);
@@ -124,11 +124,11 @@ export function StatsBento({ userId }: Props) {
         ) : (
           <ul className="mt-4 divide-y divide-border">
             {recent.map((f) => {
-              const Icon = iconForMime(f.mime_type);
+              const { Icon, tone } = iconForMime(f.mime_type, f.name);
               return (
                 <li key={f.id} className="flex items-center gap-3 py-2.5">
                   <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface">
-                    <Icon className="size-4 text-primary" />
+                    <Icon className={"size-4 " + tone} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{f.name}</div>
