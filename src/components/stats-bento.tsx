@@ -46,7 +46,7 @@ export function StatsBento({ userId }: Props) {
         supabase
           .from("shares")
           .select("id", { count: "exact", head: true })
-          .eq("user_id", userId),
+          .eq("created_by", userId),
       ]);
       return {
         files: files.count ?? 0,
