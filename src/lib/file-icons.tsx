@@ -38,12 +38,26 @@ export function iconForMime(mime: string | null | undefined, name?: string): {
   return { Icon: FileIcon, tone: "text-muted-foreground" };
 }
 
-export function isPreviewable(mime: string | null | undefined): boolean {
+export function isPreviewable(mime: string | null | undefined, name?: string): boolean {
   const m = (mime || "").toLowerCase();
-  return (
-    m.startsWith("image/") ||
-    m === "application/pdf" ||
-    m.startsWith("video/") ||
-    m.startsWith("audio/")
-  );
+  const ext = (name || "").split(".").pop()?.toLowerCase() ?? "";
+  if (m.startsWith("image/")) return true;
+  if (m.startsWith("video/")) return true;
+  if (m.startsWith("audio/")) return true;
+  if (m === "application/pdf" || ext === "pdf") return true;
+  if (m.startsWith("text/")) return true;
+  if (
+    ["md", "txt", "json", "csv", "log", "js", "ts", "tsx", "jsx", "py", "go", "rs", "html", "css", "yml", "yaml", "xml", "svg"].includes(ext)
+  ) {
+    return true;
+  }
+  return false;
 }
+
+export function isTextPreviewable(mime: string | null | undefined, name?: string): boolean {
+  const m = (mime || "").toLowerCase();
+  const ext = (name || "").split(".").pop()?.toLowerCase() ?? "";
+  if (m.startsWith("text/")) return true;
+  return ["md", "txt", "json", "csv", "log", "js", "ts", "tsx", "jsx", "py", "go", "rs", "html", "css", "yml", "yaml", "xml"].includes(ext);
+}
+
