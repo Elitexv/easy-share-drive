@@ -8,11 +8,10 @@ function normalizeError(error: unknown): SupabaseLikeError | null {
   if (!error) return null;
   if (typeof error === 'string') return { message: error };
   if (typeof error === 'object' && 'message' in error) {
-    const message = typeof (error as { message?: unknown }).message === 'string'
-      ? (error as { message: string }).message
-      : undefined;
-    const code = typeof (error as { code?: unknown }).code === 'string' ? (error as { code: string }).code : undefined;
-    const status = typeof (error as { status?: unknown }).status === 'number' ? (error as { status: number }).status : undefined;
+    const e = error as Record<string, unknown>;
+    const message = typeof e.message === 'string' ? e.message : undefined;
+    const code = typeof e.code === 'string' ? e.code : undefined;
+    const status = typeof e.status === 'number' ? e.status : undefined;
     return message ? { message, code, status } : null;
   }
   return null;

@@ -31,10 +31,25 @@ function ResetPasswordPage() {
           return;
         }
 
-        const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+        const hash = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        const params = new URLSearchParams(hash);
+        const access_token = params.get("access_token");
+        const refresh_token = params.get("refresh_token");
+
+        if (!access_token || !refresh_token) {
+          toast.error("This reset link is invalid or has expired", {
+            description: "Please request a new password reset email.",
+          });
+          navigate({ to: "/auth", search: { mode: "forgot" } });
+          return;
+        }
+
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
         if (!active) return;
 
-        if (error || !data.session) {
+        if (error) {
           toast.error("This reset link is invalid or has expired", {
             description: "Please request a new password reset email.",
           });
